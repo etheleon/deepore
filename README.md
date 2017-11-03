@@ -36,8 +36,12 @@ nvidia-docker run -it \
     etheleon/chiron
 ```
 
-# Abstract
+To train deepore we need to run chiron_rcnn_train.py
 
+''' 
+cd $HOME 
+python Chiron/chiron/chiron_rcnn_train.py
+'''
 
 # Reference
 
