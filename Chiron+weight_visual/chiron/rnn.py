@@ -60,5 +60,5 @@ def rnn_layers_one_direction(x,seq_length,training,hidden_num=200,layer_num = 3,
         lasth_rs = tf.reshape(lasth,[batch_size*max_time,hidden_num],name = 'lasth_rs')
         logits = tf.reshape(tf.nn.bias_add(tf.matmul(lasth_rs,weight_class),bias_class),[batch_size,max_time,class_n],name = "rnn_logits_rs")
 	variable_summaries(weight_class)
-        variable_summaries(biases_out)
+        variable_summaries(bias_class)
     return logits
