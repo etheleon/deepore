@@ -33,7 +33,7 @@ def loss(logits,seq_len,label):
     return loss
 
 def train_step(loss,global_step = None):
-    opt = tf.train.AdamOptimizer(FLAGS.learning_rate).minimize(loss,global_step=global_step)
+    opt = tf.train.AdamOptimizer(FLAGS.step_rate).minimize(loss,global_step=global_step)
 #    opt = tf.train.GradientDescentOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.RMSPropOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.MomentumOptimizer(FLAGS.step_rate,0.9).minimize(loss)
@@ -127,7 +127,7 @@ if __name__ == "__main__":
         self.log_dir = '/home/docker/out/logs'
         self.sequence_len = 300
         self.batch_size = 64
-        self.learning_rate = 1e-3
+        self.step_rate = 1e-3
         self.max_steps = 10000
         self.k_mer = 1
         self.model_name = 'test'
