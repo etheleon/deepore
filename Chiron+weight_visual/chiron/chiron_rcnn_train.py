@@ -119,9 +119,10 @@ def run(args):
 if __name__ == "__main__":
     class Flags():
      def __init__(self):
-        self.data_dir = '/media/haotianteng/Linux_ex/Nanopore_data/Lambda_R9.4/raw'
-        self.cache_dir = '/media/haotianteng/Linux_ex/Nanopore_data/Lambda_R9.4/cache'
-        self.log_dir = '/media/haotianteng/Linux_ex/GVM_model'
+        self.data_dir = '/home/docker/raw' #human
+        # self.data_dir = '/home/docker/ecoli' #ecoli
+        self.cache_dir = '/home/docker/out/cache'
+        self.log_dir = '/home/docker/out/logs'
         self.sequence_len = 300
         self.batch_size = 750
         self.step_rate = 1e-3

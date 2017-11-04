@@ -8,7 +8,7 @@ Created on Sat Apr 15 02:48:26 2017
 
 import tensorflow as tf
 from tensorflow.contrib.layers import batch_norm
-
+from summary import variable_summaries
 def variable_summaries(var):
   """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""
   with tf.name_scope('summaries'):
