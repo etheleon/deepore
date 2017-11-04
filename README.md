@@ -29,10 +29,15 @@ we modified the docker from `https://github.com/anurag/fastai-course-1.git`
 
 
 ```
-nvidia-docker run -it \
+DATADIR=/data/nanopore
+
+nvidia-docker run \
+    --rm -it \
     --entrypoint /bin/zsh \
-    -v /data/nanopore/new/fast5Dir/:/data \
-    -p 8889:8888 \
+    -v $DATADIR:/data \
+    -p 8890:8888 \
+    --name haruhi \
+    -w /home/docker \
     etheleon/chiron
 ```
 
