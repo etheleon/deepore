@@ -91,8 +91,8 @@ def train():
         batch_x,seq_len,batch_y = train_ds.next_batch(FLAGS.batch_size)
         indxs,values,shape = batch_y
         feed_dict =  {x:batch_x,seq_length:seq_len/ratio,y_indexs:indxs,y_values:values,y_shape:shape,training:True}
-        loss_val,gradients = sess.run([ctc_loss,opt],feed_dict = feed_dict)
-	variable_summaries(gradients)
+        loss_val,grad = sess.run([ctc_loss,opt],feed_dict = feed_dict)
+	variable_summaries(grad)
         if i%10 ==0:
 	    global_step_val = tf.train.global_step(sess,global_step)
             valid_x,valid_len,valid_y = train_ds.next_batch(FLAGS.batch_size)
