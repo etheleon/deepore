@@ -127,7 +127,7 @@ if __name__ == "__main__":
         self.log_dir = '/home/docker/out/logs'
         self.sequence_len = 300
         self.batch_size = 64
-        self.step_rate = 1e-3
+        self.learning_rate = 1e-3
         self.max_steps = 10000
         self.k_mer = 1
         self.model_name = 'test'
