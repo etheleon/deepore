@@ -37,13 +37,13 @@ nvidia-docker run -it \
     --name nanopore \
     -w /home/docker \
     -p 8889:8888 \
+    -w /home/docker \
     etheleon/chiron
 ```
 
 To train deepore we need to run chiron_rcnn_train.py
 
 ```
-cd $HOME 
 python Chiron/chiron/chiron_rcnn_train.py
 ```
 
