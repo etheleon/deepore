@@ -12,18 +12,7 @@ import numpy as np
 from tensorflow.contrib.rnn import LSTMCell
 from utils.lstm import BNLSTMCell
 from tensorflow.contrib.rnn.python.ops.rnn import stack_bidirectional_dynamic_rnn
-
-def variable_summaries(var):
-  """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""
-  with tf.name_scope('summaries'):
-    mean = tf.reduce_mean(var)
-    tf.summary.scalar('mean', mean)
-    with tf.name_scope('stddev'):
-      stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
-    tf.summary.scalar('stddev', stddev)
-    tf.summary.scalar('max', tf.reduce_max(var))
-    tf.summary.scalar('min', tf.reduce_min(var))
-    tf.summary.histogram('histogram', var)
+from summary import variable_summaries
 
 def rnn_layers(x,seq_length,training,hidden_num=100,layer_num = 3,class_n = 5):
     cells_fw = list()
@@ -70,4 +59,6 @@ def rnn_layers_one_direction(x,seq_length,training,hidden_num=200,layer_num = 3,
         bias_class = tf.Variable(tf.zeros([class_n]),name = 'bias_class')
         lasth_rs = tf.reshape(lasth,[batch_size*max_time,hidden_num],name = 'lasth_rs')
         logits = tf.reshape(tf.nn.bias_add(tf.matmul(lasth_rs,weight_class),bias_class),[batch_size,max_time,class_n],name = "rnn_logits_rs")
+        variable_summaries(weight_class)
+        variable_summaries(bias_class)
     return logits

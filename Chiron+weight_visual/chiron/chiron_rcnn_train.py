@@ -32,7 +32,10 @@ def loss(logits,seq_len,label):
     return loss
 
 def train_step(loss,global_step = None):
-    opt = tf.train.AdamOptimizer(FLAGS.step_rate).minimize(loss,global_step=global_step)
+    opt_ = tf.train.AdamOptimizer(FLAGS.step_rate)
+    grad_and_vars = opt_.compute_gradients(loss)
+    tf.summary.scalar('grad',tf.reduce_mean(grad_and_vars[1]))
+    opt = opt_.minimize(loss,global_step=global_step)
 #    opt = tf.train.GradientDescentOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.RMSPropOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.MomentumOptimizer(FLAGS.step_rate,0.9).minimize(loss)
@@ -124,9 +127,9 @@ if __name__ == "__main__":
         self.cache_dir = '/home/docker/out/cache'
         self.log_dir = '/home/docker/out/logs'
         self.sequence_len = 300
-        self.batch_size = 750
+        self.batch_size = 64
         self.step_rate = 1e-3
-        self.max_steps = 20000
+        self.max_steps = 10000
         self.k_mer = 1
         self.model_name = 'test'
         self.retrain =False
