@@ -122,7 +122,7 @@ if __name__ == "__main__":
     class Flags():
      def __init__(self):
         self.data_dir = '/home/docker/raw' #human
-        self.data_dir = '/home/docker/ecoli' #ecoli
+        #self.data_dir = '/home/docker/ecoli' #ecoli
         self.cache_dir = '/home/docker/out/cache'
         self.log_dir = '/home/docker/out/logs'
         self.sequence_len = 300
