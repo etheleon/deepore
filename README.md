@@ -1,15 +1,15 @@
 # Deepore: Deep learning for base calling MinION reads
 
 The MinION device by Oxford Nanopore Technologies (ONT) is the first portable
-USB sequencing device which promises to be part of the future of DNA sequencing technologies.
+USB sequencing device which promises play a unique part in the future of DNA sequencing.
 
-Not only is it portable but the underlying technology is able to produce long reads (1Mb) 
+Not only is it portable, the underlying technology is able to produce long reads (1Mb)
 as compared to the current status quo of short reads (100 ~ 300 bp).
 
-![alt text](https://github.com/etheleon/deepore/blob/master/misc/photo_2017-10-26_16-40-05.jpg)
-
 However it suffers from a high sequencing error rate.
-The objective of this project is to apply deep neural network models to improve upon the base calling procedure. Initial models were based on Hidden Markov Models (HMMs)
+
+The objective of this project is to apply deep neural network models to improve upon the base calling procedure.
+Initial models were based on Hidden Markov Models (HMMs)
 however several deep neural network implementations have already been published;
 DeepNano (RNN) (Boža _et al_ 2017), Chiron (CNN + RNN) (Teng _et al_ 2017).
 
@@ -48,36 +48,58 @@ python Chiron/chiron/chiron_rcnn_train.py
 ```
 
 
-## Ecoli
+## Training data: Ecoli
 
-based on NC_000913.fna
+### Reference sequence NC_000913.fna
 
 ```
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_refseq/Bacteria/Escherichia_coli_K_12_substr__MG1655_uid57779/NC_000913.fna
 ```
 
+### Preprocessing
+
+#### 1. Resquiggling
+
+Based on proprietary basecalled sequence, we align using reference sequence NC_000913 to correct for basecall errors.
+
+![alt text](https://github.com/etheleon/deepore/blob/master/misc/photo_2017-10-26_16-40-05.jpg)
+
 ```
-(chiron2) ➜  deepore git:(master) ✗ bash ./preprocessing/resquiggle.sh
+bash ./preprocessing/resquiggle.sh
 Getting file list.
 Correcting 164472 files with 1 subgroup(s)/read(s) each (Will print a dot for each 100 files completed).
-........................................................................................................
-........................................................................................................
-........................................................................................................
-........................................................................................................
-........................................................................................................
-........................................................................................................
-........................................................................................................
 ....................................................................................................
 ....................................................................................................
 ....................................................................................................
-..................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+......................................
 Failed reads summary:
         Reached maximum number of changepoints for a single indel :     11309
                 Alignment not produced. Potentially failed to locate BWA index files. : 171
 ```
 
+| # reads | Failed Alignment |
+| ---     | ---              |
+| 164472  | 171              |
 
-164472 reads
+#### 2. Extracting the raw signal
+
+```
+bash ./preprocessing/runraw.sh
+```
+
 
 # Reference
 
@@ -85,4 +107,3 @@ Boža, V, Brejová, B, Vinař, T (2017). DeepNano: Deep recurrent neural network
 
 Teng, H, Hall, M B, Duarte, T, Cao, M D, Coin, L (2017). Chiron: Translating nanopore raw signal directly into nucleotide sequence using deep learning. bioRxiv, 
 0
-
