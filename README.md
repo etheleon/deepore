@@ -6,6 +6,8 @@ USB sequencing device which promises to be part of the future of DNA sequencing 
 Not only is it portable but the underlying technology is able to produce long reads (1Mb) 
 as compared to the current status quo of short reads (100 ~ 300 bp).
 
+![alt text](https://github.com/etheleon/deepore/blob/master/misc/photo_2017-10-26_16-40-05.jpg)
+
 However it suffers from a high sequencing error rate.
 The objective of this project is to apply deep neural network models to improve upon the base calling procedure. Initial models were based on Hidden Markov Models (HMMs)
 however several deep neural network implementations have already been published;
