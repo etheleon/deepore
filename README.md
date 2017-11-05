@@ -44,7 +44,7 @@ nvidia-docker run \
 To train deepore we need to run chiron_rcnn_train.py
 
 ```
-export CUDA_VISIBLE_DEVICES="0"
+export CUDA_VISIBLE_DEVICES="1"
 python Chiron/chiron/chiron_rcnn_train.py
 ```
 
