@@ -13,7 +13,7 @@ from tensorflow.contrib.rnn import LSTMCell
 from utils.lstm import BNLSTMCell
 from tensorflow.contrib.rnn.python.ops.rnn import stack_bidirectional_dynamic_rnn
 from summary import variable_summaries
-from sru import SRUCell
+from sru import BNSRUCell
 
 def rnn_layers(x,seq_length,training,hidden_num=100,layer_num = 3,class_n = 5):
     cells_fw = list()
@@ -48,7 +48,7 @@ def rnn_layers_one_direction(x,seq_length,training,hidden_num=256,layer_num = 3,
     cells = list()
     #This is the thingwe need to change to add SRU
     for i in range(layer_num):
-        cell = SRUCell(hidden_num)
+        cell = BNSRUCell(hidden_num,training)
         #cell = BNLSTMCell(hidden_num,training)
         cells.append(cell)
     # This stacks the rnn ontop of each other
