@@ -56,6 +56,9 @@ python Chiron/chiron/chiron_rcnn_train.py
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_refseq/Bacteria/Escherichia_coli_K_12_substr__MG1655_uid57779/NC_000913.fna
 ```
 
+1. A subset of 254 reads from human genome (chromosome 12 part 9, chiron used chromosome 23 part 3) from the [nanopore WGS consortium](https://github.com/nanopore-wgs-consortium/NA12878) [need citation]
+2. Ecoli reads in fast5 format from Nic Loman's lab [link](http://lab.loman.net/2016/07/30/nanopore-r9-data-release/) [need citation]
+
 ### Preprocessing
 
 #### 1. Resquiggling
@@ -99,6 +102,7 @@ Failed reads summary:
 ```
 bash ./preprocessing/runraw.sh
 ```
+
 
 
 # Reference
