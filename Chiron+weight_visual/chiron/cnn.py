@@ -14,6 +14,7 @@ def conv_layer(indata,ksize,padding,training,name,dilate = 1,strides=[1,1,1,1],b
     """A standard convlotional layer"""
     with tf.variable_scope(name):
         W = tf.get_variable("weights", dtype = tf.float32, shape=ksize,initializer=tf.contrib.layers.xavier_initializer())
+        beta = tf.get_variable("beta",dtype=tf.float32,shape=[1],initializer = tf.contrib.layers.xavier_initializer())
         variable_summaries(W)
         if bias_term:
             b = tf.get_variable("bias", dtype=tf.float32,shape=[ksize[-1]])
@@ -33,8 +34,8 @@ def conv_layer(indata,ksize,padding,training,name,dilate = 1,strides=[1,1,1,1],b
 #            conv_out = batchnorm(conv_out,scope=scope,training = training)
             conv_out = simple_global_bn(conv_out,name = name+'_bn')
     if active:
-        with tf.variable_scope(name+'_relu'):
-            conv_out = tf.nn.relu(conv_out,name='relu')
+        with tf.variable_scope(name+'_swish'):
+            conv_out = conv_out*tf.nn.sigmoid(beta*conv_out,name='swish')
     return conv_out
 def batchnorm(inp,scope,training,decay = 0.99,epsilon = 1e-5):
     with tf.variable_scope(scope):
