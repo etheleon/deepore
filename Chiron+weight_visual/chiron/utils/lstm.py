@@ -61,7 +61,7 @@ class BNLSTMCell(RNNCell):
 
     def __call__(self, x, state, scope=None):
         with tf.variable_scope(scope or type(self).__name__):
-            c, h = state
+            c, h  = state
 
             x_size = x.get_shape().as_list()[1]
             W_xh = tf.get_variable('W_xh',
