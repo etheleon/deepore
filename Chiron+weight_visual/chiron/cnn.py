@@ -10,15 +10,15 @@ import tensorflow as tf
 from tensorflow.contrib.layers import batch_norm
 from summary import variable_summaries
 
-def conv_layer(indata,ksize,padding,training,name,dilate = 1,strides=[1,1,1,1],bias_term = False,active = True,BN= True):
+def conv_layer(indata,ksize,padding,training,name,dilate = 1,strides=[1,1,1,1],bias_term = False,active = True,BN= True,verbose=False):
     """A standard convlotional layer"""
     with tf.variable_scope(name):
         W = tf.get_variable("weights", dtype = tf.float32, shape=ksize,initializer=tf.contrib.layers.xavier_initializer())
         beta = tf.get_variable("beta",dtype=tf.float32,shape=[1],initializer = tf.contrib.layers.xavier_initializer())
-        variable_summaries(W)
+        if verbose : variable_summaries(W)
         if bias_term:
             b = tf.get_variable("bias", dtype=tf.float32,shape=[ksize[-1]])
-            variable_summaries(b)
+            if verbose : variable_summaries(b)
         if dilate>1:
             if bias_term:
                 conv_out = b + tf.nn.atrous_conv2d(indata,W,rate = dilate,padding=padding,name=name)
