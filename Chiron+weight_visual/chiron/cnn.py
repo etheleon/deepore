@@ -87,19 +87,19 @@ def inception_layer(indata,training,times=16):
         conv0f = conv_layer(indata,ksize=[1,1,in_channel,times*2],padding = 'SAME',training = training,name = 'conv0f_1x1')
         conv1f = conv_layer(conv0f,ksize=[1,3,times*2,times*3],padding = 'SAME',training = training,name = 'conv1f_1x3_d3',dilate = 3)
     return(tf.concat([conv1a,conv0b,conv1c,conv1d,conv1e,conv1f],axis = -1,name = 'concat'))
-def residual_layer(indata,out_channel,training,i_bn = False):
+def residual_layer(indata,out_channel,training,i_bn = False,verbose=False):
     fea_shape = indata.get_shape().as_list()
     in_channel = fea_shape[-1]
     with tf.variable_scope('branch1'):
-        indata_cp = conv_layer(indata,ksize = [1,1,in_channel,out_channel],padding = 'SAME',training = training,name = 'conv1',BN = i_bn,active = False)
+        indata_cp = conv_layer(indata,ksize = [1,1,in_channel,out_channel],padding = 'SAME',training = training,name = 'conv1',BN = i_bn,active = False,verbose=verbose)
     with tf.variable_scope('branch2'):
-        conv_out1 = conv_layer(indata,ksize = [1,1,in_channel,out_channel],padding = 'SAME',training = training,name = 'conv2a',bias_term = False)
-        conv_out2 = conv_layer(conv_out1,ksize = [1,3,out_channel,out_channel],padding = 'SAME',training=training,name = 'conv2b',bias_term = False)
-        conv_out3 = conv_layer(conv_out2,ksize = [1,1,out_channel,out_channel],padding = 'SAME',training=training,name = 'conv2c',bias_term = False,active = False)
+        conv_out1 = conv_layer(indata,ksize = [1,1,in_channel,out_channel],padding = 'SAME',training = training,name = 'conv2a',bias_term = False,verbose=verbose)
+        conv_out2 = conv_layer(conv_out1,ksize = [1,3,out_channel,out_channel],padding = 'SAME',training=training,name = 'conv2b',bias_term = False,verbose=verbose)
+        conv_out3 = conv_layer(conv_out2,ksize = [1,1,out_channel,out_channel],padding = 'SAME',training=training,name = 'conv2c',bias_term = False,active = False,verbose=verbose)
     with tf.variable_scope('plus'):
         relu_out = tf.nn.relu(indata_cp+conv_out3,name = 'final_relu')
     return relu_out
-def getcnnfeature(signal,training):
+def getcnnfeature(signal,training,verbose=False):
     signal_shape = signal.get_shape().as_list()
     signal = tf.reshape(signal,[signal_shape[0],1,signal_shape[1],1])
     print(signal.get_shape())
@@ -148,11 +148,11 @@ def getcnnfeature(signal,training):
 
 #   Residual Layer x 5
     with tf.variable_scope('res_layer1'):
-        res1 = residual_layer(signal,out_channel = 256,training = training,i_bn = True)
+        res1 = residual_layer(signal,out_channel = 256,training = training,i_bn = True,verbose=verbose)
     with tf.variable_scope('res_layer2'):
-        res2 = residual_layer(res1,out_channel = 256,training = training)
+        res2 = residual_layer(res1,out_channel = 256,training = training,verbose=verbose)
     with tf.variable_scope('res_layer3'):
-        res3 = residual_layer(res2,out_channel = 256,training = training)
+        res3 = residual_layer(res2,out_channel = 256,training = training,verbose=verbose)
 #    with tf.variable_scope('res_layer4'):
 #        res4 = residual_layer(res3,out_channel = 512,training = training)
 #    with tf.variable_scope('res_layer5'):

@@ -5,6 +5,8 @@ Created on Mon Apr 17 17:32:32 2017
 
 @author: haotianteng
 """
+import time,os
+import argparse
 import tensorflow as tf
 from distutils.dir_util import copy_tree
 from chiron_input import read_raw_data_sets
@@ -12,17 +14,16 @@ from cnn import getcnnfeature
 #from cnn import getcnnlogit
 #from rnn import rnn_layers
 from rnn import rnn_layers_one_direction
-import time,os
 from summary import variable_summaries
 
 def save_model():
     copy_tree(os.path.dirname(os.path.abspath(__file__)),FLAGS.log_dir+FLAGS.model_name+'/model')
-def inference(x,seq_length,training):
-    cnn_feature = getcnnfeature(x,training = training)
+def inference(x,seq_length,training,verbose):
+    cnn_feature = getcnnfeature(x,training = training,verbose=verbose)
     feashape = cnn_feature.get_shape().as_list()
     ratio = FLAGS.sequence_len/feashape[1]
 #    logits = rnn_layers(cnn_feature,seq_length/ratio,training,class_n = 4**FLAGS.k_mer+1 )
-    logits = rnn_layers_one_direction(cnn_feature,seq_length/ratio,training,class_n = 4**FLAGS.k_mer+1 )
+    logits = rnn_layers_one_direction(cnn_feature,seq_length/ratio,training,class_n = 4**FLAGS.k_mer+1,verbose=verbose )
 #    logits = getcnnlogit(cnn_feature)
     return logits,ratio
 
@@ -62,6 +63,16 @@ def prediction(logits,seq_length,label,top_paths=1):
     return error
 
 def train():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--logs", help="logs")
+    args = parser.parse_args()
+    if args.logs:
+        print("logs turned on")
+        verbose = True
+    else:
+        print("logs turned off")
+        verbose = False
     training = tf.placeholder(tf.bool)
     global_step=tf.get_variable('global_step',trainable=False,shape=(),dtype = tf.int32,initializer = tf.zeros_initializer())
     x = tf.placeholder(tf.float32,shape = [FLAGS.batch_size,FLAGS.sequence_len])
@@ -70,7 +81,7 @@ def train():
     y_values = tf.placeholder(tf.int32)
     y_shape = tf.placeholder(tf.int64)
     y = tf.SparseTensor(y_indexs,y_values,y_shape)
-    logits,ratio = inference(x,seq_length,training)
+    logits,ratio = inference(x,seq_length,training,verbose)
     ctc_loss = loss(logits,seq_length,y)
     opt = train_step(ctc_loss,global_step = global_step)
     error = prediction(logits,seq_length,y)
