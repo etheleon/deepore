@@ -45,8 +45,14 @@ To train deepore we need to run chiron_rcnn_train.py
 
 ```
 export CUDA_VISIBLE_DEVICES="1"
-python Chiron/chiron/chiron_rcnn_train.py
+python deepore_SRU+swish/chiron/chiron_rcnn_train.py
 ```
+
+If u want to log weights and the gradients u can use the log flag. 
+
+'''
+python deepore_SRU+swish/chiron/chiron__rcnn_train.py --logs 1
+'''
 
 # Reference
 

@@ -1,3 +1,0 @@
-include chiron/utils/*
-recursive-include chiron/model *
-recursive-include chiron/example_data *
