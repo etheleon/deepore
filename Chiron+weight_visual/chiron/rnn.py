@@ -50,8 +50,7 @@ def rnn_layers_one_direction(x,seq_length,training,hidden_num=200,layer_num = 3,
         cells.append(cell)
     cell_wrap = tf.contrib.rnn.MultiRNNCell(cells)
     with tf.variable_scope('LSTM_rnn') as scope:
-        lasth,state = tf.nn.dynamic_rnn(cell_wrap,x,sequence_length = seq_length,dtype = tf.float32,scope = scope)
-    decoder_cell = tf.contrib.rnn.LSTMCell(hidden_num)
+        lasth,_ = tf.nn.dynamic_rnn(cell_wrap,x,sequence_length = seq_length,dtype = tf.float32,scope = scope)
     #shape of lasth [batch_size,max_time,hidden_num*2]
     batch_size = lasth.get_shape().as_list()[0]
     max_time = lasth.get_shape().as_list()[1]
@@ -60,6 +59,6 @@ def rnn_layers_one_direction(x,seq_length,training,hidden_num=200,layer_num = 3,
         bias_class = tf.Variable(tf.zeros([class_n]),name = 'bias_class')
         lasth_rs = tf.reshape(lasth,[batch_size*max_time,hidden_num],name = 'lasth_rs')
         logits = tf.reshape(tf.nn.bias_add(tf.matmul(lasth_rs,weight_class),bias_class),[batch_size,max_time,class_n],name = "rnn_logits_rs")
-	variable_summaries(weight_class)
-        variable_summaries(bias_class)
+	#variable_summaries(weight_class)
+        #variable_summaries(biases_class)
     return logits
