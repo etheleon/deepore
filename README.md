@@ -50,9 +50,9 @@ python deepore_SRU+swish/chiron/chiron_rcnn_train.py
 
 If u want to log weights and the gradients u can use the log flag. 
 
-'''
+```
 python deepore_SRU+swish/chiron/chiron__rcnn_train.py --logs 1
-'''
+```
 
 # Reference
 
