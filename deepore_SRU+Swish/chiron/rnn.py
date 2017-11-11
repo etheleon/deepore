@@ -12,6 +12,7 @@ import numpy as np
 from tensorflow.contrib.rnn import LSTMCell
 from utils.lstm import BNLSTMCell
 from tensorflow.contrib.rnn.python.ops.rnn import stack_bidirectional_dynamic_rnn
+from tensorflow.contrib.rnn import DropoutWrapper
 from summary import variable_summaries
 from sru import BNSRUCell
 
@@ -50,6 +51,7 @@ def rnn_layers_one_direction(x,seq_length,training,hidden_num=256,layer_num = 3,
     #This is the thingwe need to change to add SRU
     for i in range(layer_num):
         cell = BNSRUCell(hidden_num,training)
+        cell = DropoutWrapper(cell, output_keep_prob=0.5,variational_recurrent= True,dtype=tf.float32)
         #cell = BNLSTMCell(hidden_num,training)
         cells.append(cell)
     # This stacks the rnn ontop of each other
