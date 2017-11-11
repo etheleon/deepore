@@ -50,6 +50,7 @@ def rnn_layers_one_direction(x,seq_length,training,hidden_num=200,layer_num = 3,
         cells.append(cell)
     cell_wrap = tf.contrib.rnn.MultiRNNCell(cells)
     with tf.variable_scope('LSTM_rnn') as scope:
+        print(x)
         lasth,_ = tf.nn.dynamic_rnn(cell_wrap,x,sequence_length = seq_length,dtype = tf.float32,scope = scope)
     #shape of lasth [batch_size,max_time,hidden_num*2]
     batch_size = lasth.get_shape().as_list()[0]
