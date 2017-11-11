@@ -34,8 +34,8 @@ def conv_layer(indata,ksize,padding,training,name,dilate = 1,strides=[1,1,1,1],b
 #            conv_out = batchnorm(conv_out,scope=scope,training = training)
             conv_out = simple_global_bn(conv_out,name = name+'_bn')
     if active:
-        with tf.variable_scope(name+'_swish'):
-            conv_out = conv_out*tf.nn.sigmoid(beta*conv_out,name='swish')
+        with tf.variable_scope(name+'_relu'):
+            conv_out = tf.nn.relu(conv_out,name='relu')
     return conv_out
 def batchnorm(inp,scope,training,decay = 0.99,epsilon = 1e-5):
     with tf.variable_scope(scope):
