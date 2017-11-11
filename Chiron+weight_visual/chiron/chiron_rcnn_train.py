@@ -38,7 +38,7 @@ def train_step(loss,global_step = None):
 #    opt = tf.train.RMSPropOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.MomentumOptimizer(FLAGS.step_rate,0.9).minimize(loss)
     grad = opt.compute_gradients(loss)
-    tf.summary.scalar('grad',tf.reduce_mean(grad[1]))
+    tf.summary.scalar('grad',tf.reduce_mean(grad[0][0]))
     opt = opt.minimize(loss,global_step=global_step)
     return opt
 def prediction(logits,seq_length,label,top_paths=1):
