@@ -7,7 +7,7 @@ Created on Mon Apr 17 17:32:32 2017
 """
 import tensorflow as tf
 from distutils.dir_util import copy_tree
-from chiron_input import read_raw_data_sets
+from chiron_input import read_raw_data_sets,label_seq2seq
 from cnn import getcnnfeature
 #from cnn import getcnnlogit
 #from rnn import rnn_layers
@@ -17,12 +17,12 @@ from summary import variable_summaries
 
 def save_model():
     copy_tree(os.path.dirname(os.path.abspath(__file__)),FLAGS.log_dir+FLAGS.model_name+'/model')
-def inference(x,seq_length,training):
+def inference(x,y,seq_length,training):
     cnn_feature = getcnnfeature(x,training = training)
     feashape = cnn_feature.get_shape().as_list()
     ratio = FLAGS.sequence_len/feashape[1]
 #    logits = rnn_layers(cnn_feature,seq_length/ratio,training,class_n = 4**FLAGS.k_mer+1 )
-    logits = rnn_layers_one_direction(cnn_feature,seq_length/ratio,training,class_n = 4**FLAGS.k_mer+1 )
+    logits = rnn_layers_one_direction(cnn_feature,y,seq_length/ratio,training,class_n = 4**FLAGS.k_mer+1 )
 #    logits = getcnnlogit(cnn_feature)
     return logits,ratio
 
@@ -37,8 +37,8 @@ def train_step(loss,global_step = None):
 #    opt = tf.train.GradientDescentOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.RMSPropOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.MomentumOptimizer(FLAGS.step_rate,0.9).minimize(loss)
-    grad = opt.compute_gradients(loss)
-    tf.summary.scalar('grad',tf.reduce_mean(grad[0][0]))
+    #grad = opt.compute_gradients(loss)
+   # tf.summary.scalar('grad',tf.reduce_mean(grad[0][0]))
     opt = opt.minimize(loss,global_step=global_step)
     return opt
 def prediction(logits,seq_length,label,top_paths=1):
@@ -69,8 +69,17 @@ def train():
     y_indexs = tf.placeholder(tf.int64)
     y_values = tf.placeholder(tf.int32)
     y_shape = tf.placeholder(tf.int64)
+    decoder_input = tf.placeholder(tf.int64,shape = (None,None))
+    #embeddings = tf.Variable(tf.random_uniform([3, 20], -1.0, 1.0), dtype=tf.float32)
+    #decoder_input_embedded = tf.nn.embedding_lookup(embeddings, decoder_input)
+    #y_= tf.one_hot(targets, 3)
     y = tf.SparseTensor(y_indexs,y_values,y_shape)
-    logits,ratio = inference(x,seq_length,training)
+    #print(targets.shape())
+    targets = tf.sparse_to_dense(y_indexs,[FLAGS.batch_size,FLAGS.sequence_len,2],y_values)
+    targets = tf.cast(targets,tf.float32)
+    #test = tf.one_hot(test,5)
+    #print(test.get_shape())
+    logits,ratio = inference(x,targets,seq_length,training)
     ctc_loss = loss(logits,seq_length,y)
     opt = train_step(ctc_loss,global_step = global_step)
     error = prediction(logits,seq_length,y)
@@ -87,7 +96,8 @@ def train():
         saver.restore(sess,tf.train.latest_checkpoint(FLAGS.log_dir+FLAGS.model_name))
         print("Model loaded finished, begin loading data. \n")
     summary_writer = tf.summary.FileWriter(FLAGS.log_dir+FLAGS.model_name+'/summary/', sess.graph)
-
+    label = label_seq2seq(FLAGS.data_dir,FLAGS.k_mer)[2]
+    #print(label)
     train_ds = read_raw_data_sets(FLAGS.data_dir,FLAGS.cache_dir,FLAGS.sequence_len,k_mer = FLAGS.k_mer)
     start=time.time()
     for i in range(FLAGS.max_steps):
@@ -98,6 +108,7 @@ def train():
         if i%10 ==0:
 	    global_step_val = tf.train.global_step(sess,global_step)
             valid_x,valid_len,valid_y = train_ds.next_batch(FLAGS.batch_size)
+            print(train_ds)
             indxs,values,shape = valid_y
             feed_dict = {x:valid_x,seq_length:valid_len/ratio,y_indexs:indxs,y_values:values,y_shape:shape,training:True}
             error_val = sess.run(error,feed_dict = feed_dict)
