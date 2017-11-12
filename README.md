@@ -88,23 +88,22 @@ To run original chiron the `8.0-cudnn5-runtime-ubuntu16.04` tag should be used s
 
 ## Training data: Ecoli
 
-Reference sequence NC_000913.fna
+Reference sequence NC_000913
 ```
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_refseq/Bacteria/Escherichia_coli_K_12_substr__MG1655_uid57779/NC_000913.fna
 ```
 
-1. A subset of 254 reads from human genome (chromosome 12 part 9, chiron used chromosome 23 part 3) from the [nanopore WGS consortium](https://github.com/nanopore-wgs-consortium/NA12878) [need citation]
 2. Ecoli reads in fast5 format from Nic Loman's lab [link](http://lab.loman.net/2016/07/30/nanopore-r9-data-release/) [need citation]
-
-
 
 ## Validation data: Zika
 
+Reference sequence NC_012532.1
+
 The reads are amplicons from 36 primers meant to cover the whole of the zika genome from Quick et. al 2017.
 
-### Summary
+## Additional data
 
-* 9608 reads
+1. A subset of 254 reads from human genome (chromosome 12 part 9, chiron used chromosome 23 part 3) from the [nanopore WGS consortium](https://github.com/nanopore-wgs-consortium/NA12878) [need citation]
 
 ### Preprocessing
 
@@ -120,9 +119,10 @@ bash ./preprocessing/resquiggle.sh
 
 Rmbr to edit the variables in `resquiggle.sh`
 
-| # reads | Failed Alignment |
-| ---     | ---              |
-| 164472  | 171              |
+| Dataset | # reads | Failed Alignment | Reference sequence |
+| ---     | ---     | ---              | ---                |
+| Ecoli   | 164472  | 171              | NC_000913          |
+| Zika    | 9608    |                  | NC_012532          |
 
 #### 2. Extracting the raw signal
 
