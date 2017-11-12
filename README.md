@@ -100,8 +100,11 @@ wget ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_refseq/Bacteria/Escherichia_
 
 ## Validation data: Zika
 
+The reads are amplicons from 36 primers meant to cover the whole of the zika genome from Quick et. al 2017.
 
+### Summary
 
+* 9608 reads
 
 ### Preprocessing
 
@@ -127,11 +130,10 @@ Rmbr to edit the variables in `resquiggle.sh`
 bash ./preprocessing/runraw.sh
 ```
 
-
-
 # Reference
 
 Boža, V, Brejová, B, Vinař, T (2017). DeepNano: Deep recurrent neural networks for base calling in MinION nanopore reads. PLoS ONE, 12, 6:e0178751.
 
-Teng, H, Hall, M B, Duarte, T, Cao, M D, Coin, L (2017). Chiron: Translating nanopore raw signal directly into nucleotide sequence using deep learning. bioRxiv, 
-0
+Quick, J., Grubaugh, N. D., Pullan, S. T., Claro, I. M., Smith, A. D., Gangavarapu, K., … Nature, S. (2017). Multiplex PCR method for MinION and Illumina sequencing of Zika and other virus genomes directly from clinical samples, 12(6). http://doi.org/10.1038/nprot.2017.066
+
+Teng, H, Hall, M B, Duarte, T, Cao, M D, Coin, L (2017). Chiron: Translating nanopore raw signal directly into nucleotide sequence using deep learning. bioRxiv,
