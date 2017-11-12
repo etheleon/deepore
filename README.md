@@ -23,12 +23,20 @@ Hence we can try to use cross-pollinate methods from both sides and see the resu
 git clone --recursive https://github.com/etheleon/deepore.git
 ```
 
-## Docker
+## Docker Container
 
-Use `nvidia-docker`
+We are using nvidia's customised [docker](https://github.com/NVIDIA/nvidia-docker) `nvidia-docker`.
+![nvidia-docker](https://cloud.githubusercontent.com/assets/3028125/12213714/5b208976-b632-11e5-8406-38d379ec46aa.png)
 
-we modified the docker from `https://github.com/anurag/fastai-course-1.git`
+Which is based on the `8.0-cudnn6-runtime-ubuntu16.04` tag
 
+tensorflow version 1.3.0
+python=2.7
+
+We modified the docker from `https://github.com/anurag/fastai-course-1.git`
+
+
+To start the container:
 
 ```
 nvidia-docker run -it \
@@ -37,27 +45,63 @@ nvidia-docker run -it \
     --name nanopore \
     -w /home/docker \
     -p 8889:8888 \
-    -w /home/docker \
     etheleon/chiron
 ```
 
-To train deepore we need to run chiron_rcnn_train.py
+To start a new shell with a existing container running
 
 ```
-python Chiron/chiron/chiron_rcnn_train.py
+containername="awesome_benz"
+nvidia-docker exec -it $containername /bin/zsh
 ```
 
+To train (ecoli), the model
+
+1. run preprocessing first
+2. run `chiron_rcnn_train.py`
+
+but remember to check 2 things
+
+1. set the the raw file directory, containing the `.signal` and `.label` files
+2. the logs directory, by default this will be pointing to `/home/docker/out/logs`.
+Remember to backup the contents of this folder if you're running a new model,
+else the checkpoint data will saved over.
+
+For the ecoli dataset, the raw files are in `/home/docker/ecoli/data/ecoli_raw`
+
+```
+➜  deepore git:(master) ✗ ls ~/ecoli/data/ecoli_raw | head
+nanopore2_20160728_FNFAB24462_MN17024_sequencing_run_E_coli_K12_1D_R9_SpotOn_2_40525_ch100_read381_strand1.label
+nanopore2_20160728_FNFAB24462_MN17024_sequencing_run_E_coli_K12_1D_R9_SpotOn_2_40525_ch100_read381_strand1.signal
+nanopore2_20160728_FNFAB24462_MN17024_sequencing_run_E_coli_K12_1D_R9_SpotOn_2_40525_ch100_read423_strand.label
+nanopore2_20160728_FNFAB24462_MN17024_sequencing_run_E_coli_K12_1D_R9_SpotOn_2_40525_ch100_read423_strand.signal
+```
+
+```
+export CUDA_VISIBLE_DEVICES="1"
+newChiron=</path/2/new/chiron>
+python $newChiron/chiron/chiron_rcnn_train.py
+```
+
+
+To run original chiron the `8.0-cudnn5-runtime-ubuntu16.04` tag should be used since tensorflow 1.0.1 relies on cudnn5.
 
 ## Training data: Ecoli
 
-### Reference sequence NC_000913.fna
-
+Reference sequence NC_000913.fna
 ```
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_refseq/Bacteria/Escherichia_coli_K_12_substr__MG1655_uid57779/NC_000913.fna
 ```
 
 1. A subset of 254 reads from human genome (chromosome 12 part 9, chiron used chromosome 23 part 3) from the [nanopore WGS consortium](https://github.com/nanopore-wgs-consortium/NA12878) [need citation]
 2. Ecoli reads in fast5 format from Nic Loman's lab [link](http://lab.loman.net/2016/07/30/nanopore-r9-data-release/) [need citation]
+
+
+
+## Validation data: Zika
+
+
+
 
 ### Preprocessing
 
@@ -69,29 +113,9 @@ Based on proprietary basecalled sequence, we align using reference sequence NC_0
 
 ```
 bash ./preprocessing/resquiggle.sh
-Getting file list.
-Correcting 164472 files with 1 subgroup(s)/read(s) each (Will print a dot for each 100 files completed).
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-....................................................................................................
-......................................
-Failed reads summary:
-        Reached maximum number of changepoints for a single indel :     11309
-                Alignment not produced. Potentially failed to locate BWA index files. : 171
 ```
+
+Rmbr to edit the variables in `resquiggle.sh`
 
 | # reads | Failed Alignment |
 | ---     | ---              |
