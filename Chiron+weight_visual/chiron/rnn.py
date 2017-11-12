@@ -43,7 +43,7 @@ def rnn_layers(x,seq_length,training,hidden_num=100,layer_num = 3,class_n = 5):
         variable_summaries(biases_out)
     return logits
 
-def rnn_layers_one_direction(x,decoder_inputs_embedded,seq_length,training,hidden_num=200,layer_num = 3,class_n = 5):
+def rnn_layers_one_direction(x,decoder_inputs,seq_length,training,hidden_num=200,layer_num = 3,class_n = 5):
     cells = list()
     for i in range(layer_num):
         cell = BNLSTMCell(hidden_num,training)
@@ -55,6 +55,8 @@ def rnn_layers_one_direction(x,decoder_inputs_embedded,seq_length,training,hidde
     #shape of lasth [batch_size,max_time,hidden_num*2]
     decoder_cell = BNLSTMCell(hidden_num,training)
     print(encoder_final_state)
+    embeddings = tf.Variable(tf.random_uniform([3, 5], -1.0, 1.0), dtype=tf.float32)
+    decoder_inputs_embedded = tf.nn.embedding_lookup(embeddings, decoder_inputs)
     decoder_outputs, decoder_final_state = tf.nn.dynamic_rnn( decoder_cell, decoder_inputs_embedded,initial_state=encoder_final_state[2],dtype=tf.float32, scope="plain_decoder")
     logits = tf.contrib.layers.linear(decoder_outputs, class_n)
     #print(logits_fake.shape)
