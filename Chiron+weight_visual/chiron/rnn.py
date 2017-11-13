@@ -65,8 +65,9 @@ def rnn_layers_one_direction(x,decoder_inputs,seq_length,training,hidden_num=200
     projection_layer = layers_core.Dense(
             class_n, use_bias=False
     )
+    print(encoder_final_state)
     attention_states = tf.transpose(encoder_final_state[2], [1, 0, 2])
-    print(attention_states.shape)
+    #print(attention_states.shape)
     attention_mechanism = tf.contrib.seq2seq.LuongAttention(
             200, attention_states,
             memory_sequence_length=seq_length

@@ -33,12 +33,26 @@ def loss(logits,seq_len,label):
     return loss
 
 def train_step(loss,global_step = None):
-    opt = tf.train.AdamOptimizer(FLAGS.step_rate)
+    #learning_rate = FLAGS.step_rate
+    learning_rate = tf.train.exponential_decay(FLAGS.step_rate, global_step,100000, 0.96, staircase=True)
+    #Leanring rate decay
+    opt = tf.train.AdamOptimizer(learning_rate)
 #    opt = tf.train.GradientDescentOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.RMSPropOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.MomentumOptimizer(FLAGS.step_rate,0.9).minimize(loss)
-    #grad = opt.compute_gradients(loss)
-   # tf.summary.scalar('grad',tf.reduce_mean(grad[0][0]))
+    grad = opt.compute_gradients(loss)
+    tf.summary.scalar('grad',tf.reduce_mean(grad[0][0]))
+
+    #Gradient clipping
+    params = tf.trainable_variables()
+    gradients = tf.gradients(loss, params)
+    max_gradient_norm = 5
+    clipped_gradients, _ = tf.clip_by_global_norm(
+            gradients, max_gradient_norm
+    )
+    opt.apply_gradients(
+            zip(clipped_gradients, params)
+    )
     opt = opt.minimize(loss,global_step=global_step)
     return opt
 def prediction(logits,seq_length,label,top_paths=1):
@@ -107,7 +121,6 @@ def train():
         if i%10 ==0:
 	    global_step_val = tf.train.global_step(sess,global_step)
             valid_x,valid_len,valid_y = train_ds.next_batch(FLAGS.batch_size)
-            print(train_ds)
             indxs,values,shape = valid_y
             feed_dict = {x:valid_x,seq_length:valid_len/ratio,y_indexs:indxs,y_values:values,y_shape:shape,training:True}
             error_val = sess.run(error,feed_dict = feed_dict)
@@ -133,10 +146,10 @@ def run(args):
 if __name__ == "__main__":
     class Flags():
      def __init__(self):
-        self.data_dir = '/home/docker/raw' #human
-        #self.data_dir = '/home/docker/ecoli' #ecoli
+        #self.data_dir = '/home/docker/raw' #human
+        self.data_dir = '/home/docker/ecoli/data/ecoli_raw' #ecoli
         self.cache_dir = '/home/docker/out/cache'
-        self.log_dir = '/home/docker/out/logs'
+        self.log_dir = '/home/docker/out/logs_seq2seq+attention'
         self.sequence_len = 300
         self.batch_size = 64
         self.step_rate = 1e-3
