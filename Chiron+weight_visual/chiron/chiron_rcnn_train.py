@@ -34,27 +34,27 @@ def loss(logits,seq_len,label):
 
 def train_step(loss,global_step = None):
     #learning_rate = FLAGS.step_rate
-    learning_rate = tf.train.exponential_decay(FLAGS.step_rate, global_step,100000, 0.96, staircase=True)
+    #learning_rate = tf.train.exponential_decay(FLAGS.step_rate, global_step,100000, 0.96, staircase=True)
+    boundaries = [0,100000]
+    values = [FLAGS.step_rate*(1-i*0.01) for i in range(0,10)]
+    learning_rate = tf.train.piecewise_constant(global_step, boundaries, values)
     #Leanring rate decay
     opt = tf.train.AdamOptimizer(learning_rate)
 #    opt = tf.train.GradientDescentOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.RMSPropOptimizer(FLAGS.step_rate).minimize(loss)
 #    opt = tf.train.MomentumOptimizer(FLAGS.step_rate,0.9).minimize(loss)
-    grad = opt.compute_gradients(loss)
-    tf.summary.scalar('grad',tf.reduce_mean(grad[0][0]))
 
     #Gradient clipping
     params = tf.trainable_variables()
     gradients = tf.gradients(loss, params)
     max_gradient_norm = 5
+    tf.summary.scalar('grad',tf.reduce_mean(gradients[-1][0]))
     clipped_gradients, _ = tf.clip_by_global_norm(
             gradients, max_gradient_norm
     )
-    opt.apply_gradients(
-            zip(clipped_gradients, params)
-    )
-    opt = opt.minimize(loss,global_step=global_step)
+    opt = opt.apply_gradients(zip(clipped_gradients, params),global_step=global_step)
     return opt
+
 def prediction(logits,seq_length,label,top_paths=1):
     """
     Args:
@@ -149,7 +149,7 @@ if __name__ == "__main__":
         #self.data_dir = '/home/docker/raw' #human
         self.data_dir = '/home/docker/ecoli/data/ecoli_raw' #ecoli
         self.cache_dir = '/home/docker/out/cache'
-        self.log_dir = '/home/docker/out/logs_seq2seq+attention'
+        self.log_dir = '/home/docker/out/logs_seq2seq+attention2'
         self.sequence_len = 300
         self.batch_size = 64
         self.step_rate = 1e-3
