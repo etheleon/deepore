@@ -1,5 +1,7 @@
 # Deepore: Deep learning for base calling MinION reads
 
+![poster](poster.jpg)
+
 The MinION device by Oxford Nanopore Technologies (ONT) is the first portable
 USB sequencing device which promises play a unique part in the future of DNA sequencing.
 
